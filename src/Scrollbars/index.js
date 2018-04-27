@@ -4,7 +4,6 @@ import { Component, createElement, cloneElement } from 'react';
 import PropTypes from 'prop-types';
 
 import isString from '../utils/isString';
-import getScrollbarWidth from '../utils/getScrollbarWidth';
 import returnFalse from '../utils/returnFalse';
 import getInnerWidth from '../utils/getInnerWidth';
 import getInnerHeight from '../utils/getInnerHeight';
@@ -215,7 +214,6 @@ export default class Scrollbars extends Component {
         if (typeof document === 'undefined' || !this.view) return;
         const { view, trackHorizontal, trackVertical, thumbHorizontal, thumbVertical } = this;
         view.addEventListener('scroll', this.handleScroll);
-        if (!getScrollbarWidth()) return;
         trackHorizontal.addEventListener('mouseenter', this.handleTrackMouseEnter);
         trackHorizontal.addEventListener('mouseleave', this.handleTrackMouseLeave);
         trackHorizontal.addEventListener('mousedown', this.handleHorizontalTrackMouseDown);
@@ -232,7 +230,7 @@ export default class Scrollbars extends Component {
         if (typeof document === 'undefined' || !this.view) return;
         const { view, trackHorizontal, trackVertical, thumbHorizontal, thumbVertical } = this;
         view.removeEventListener('scroll', this.handleScroll);
-        if (!getScrollbarWidth()) return;
+
         trackHorizontal.removeEventListener('mouseenter', this.handleTrackMouseEnter);
         trackHorizontal.removeEventListener('mouseleave', this.handleTrackMouseLeave);
         trackHorizontal.removeEventListener('mousedown', this.handleHorizontalTrackMouseDown);
@@ -446,43 +444,41 @@ export default class Scrollbars extends Component {
     _update(callback) {
         const { onUpdate, hideTracksWhenNotNeeded } = this.props;
         const values = this.getValues();
-        if (getScrollbarWidth()) {
-            const { scrollLeft, clientWidth, scrollWidth } = values;
-            const trackHorizontalWidth = getInnerWidth(this.trackHorizontal);
-            const thumbHorizontalWidth = this.getThumbHorizontalWidth();
-            const thumbHorizontalX = scrollLeft / (scrollWidth - clientWidth) * (trackHorizontalWidth - thumbHorizontalWidth);
-            const thumbHorizontalStyle = {
-                width: thumbHorizontalWidth,
-                transform: `translateX(${thumbHorizontalX}px)`
+        const { scrollLeft, clientWidth, scrollWidth } = values;
+        const trackHorizontalWidth = getInnerWidth(this.trackHorizontal);
+        const thumbHorizontalWidth = this.getThumbHorizontalWidth();
+        const thumbHorizontalX = scrollLeft / (scrollWidth - clientWidth) * (trackHorizontalWidth - thumbHorizontalWidth);
+        const thumbHorizontalStyle = {
+            width: thumbHorizontalWidth,
+            transform: `translateX(${thumbHorizontalX}px)`
+        };
+        const { scrollTop, clientHeight, scrollHeight } = values;
+        const trackVerticalHeight = getInnerHeight(this.trackVertical);
+        const thumbVerticalHeight = this.getThumbVerticalHeight();
+        const thumbVerticalY = scrollTop / (scrollHeight - clientHeight) * (trackVerticalHeight - thumbVerticalHeight);
+        const thumbVerticalStyle = {
+            height: thumbVerticalHeight,
+            transform: `translateY(${thumbVerticalY}px)`
+        };
+        if (hideTracksWhenNotNeeded) {
+            const trackHorizontalStyle = {
+                visibility: scrollWidth > clientWidth ? 'visible' : 'hidden'
             };
-            const { scrollTop, clientHeight, scrollHeight } = values;
-            const trackVerticalHeight = getInnerHeight(this.trackVertical);
-            const thumbVerticalHeight = this.getThumbVerticalHeight();
-            const thumbVerticalY = scrollTop / (scrollHeight - clientHeight) * (trackVerticalHeight - thumbVerticalHeight);
-            const thumbVerticalStyle = {
-                height: thumbVerticalHeight,
-                transform: `translateY(${thumbVerticalY}px)`
+            const trackVerticalStyle = {
+                visibility: scrollHeight > clientHeight ? 'visible' : 'hidden'
             };
-            if (hideTracksWhenNotNeeded) {
-                const trackHorizontalStyle = {
-                    visibility: scrollWidth > clientWidth ? 'visible' : 'hidden'
-                };
-                const trackVerticalStyle = {
-                    visibility: scrollHeight > clientHeight ? 'visible' : 'hidden'
-                };
-                css(this.trackHorizontal, trackHorizontalStyle);
-                css(this.trackVertical, trackVerticalStyle);
-            }
-            css(this.thumbHorizontal, thumbHorizontalStyle);
-            css(this.thumbVertical, thumbVerticalStyle);
+            css(this.trackHorizontal, trackHorizontalStyle);
+            css(this.trackVertical, trackVerticalStyle);
         }
+        css(this.thumbHorizontal, thumbHorizontalStyle);
+        css(this.thumbVertical, thumbVerticalStyle);
         if (onUpdate) onUpdate(values);
         if (typeof callback !== 'function') return;
         callback(values);
     }
 
     render() {
-        const scrollbarWidth = getScrollbarWidth();
+        const scrollbarWidth = 15;
         /* eslint-disable no-unused-vars */
         const {
             onScroll,

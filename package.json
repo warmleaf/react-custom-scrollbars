@@ -1,6 +1,6 @@
 {
-  "name": "react-custom-scrollbars",
-  "version": "4.2.1",
+  "name": "react-rcs",
+  "version": "4.3.0",
   "description": "React scrollbars component",
   "main": "lib/index.js",
   "scripts": {
@@ -16,7 +16,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/malte-wessel/react-custom-scrollbars.git"
+    "url": "https://github.com/warmleaf/react-custom-scrollbars.git"
   },
   "keywords": [
     "scroll",
@@ -29,9 +29,9 @@
   "author": "Malte Wessel",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/malte-wessel/react-custom-scrollbars/issues"
+    "url": "https://github.com/warmleaf/react-custom-scrollbars/issues"
   },
-  "homepage": "https://github.com/malte-wessel/react-custom-scrollbars",
+  "homepage": "https://github.com/warmleaf/react-custom-scrollbars",
   "devDependencies": {
     "babel-cli": "^6.2.0",
     "babel-core": "^6.2.1",
